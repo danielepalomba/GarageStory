@@ -39,3 +39,4 @@ build/
 
 # .gitignore
 src/main/resources/config.properties
+savings/garage.dat

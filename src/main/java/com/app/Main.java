@@ -62,11 +62,11 @@ public class Main {
         String plate = scn.nextLine();
         System.out.println("Enter the VIN: ");
         String vin = scn.nextLine();
-        System.out.println("Enter the registration date: ");
-        String regDate = scn.nextLine();
-        System.out.println("Enter the last revision date: ");
+        System.out.println("Enter the insurance deadline: ");
+        String insuranceDate = scn.nextLine();
+        System.out.println("Enter the review deadline: ");
         String revDate = scn.nextLine();
-        garage.addBike(new Bike(brand, model, plate, vin, LocalDate.parse(regDate), LocalDate.parse(revDate)));
+        garage.addBike(new Bike(brand, model, plate, vin, LocalDate.parse(insuranceDate), LocalDate.parse(revDate)));
     }
 
     private static void findBike(Scanner scn, Garage garage) {

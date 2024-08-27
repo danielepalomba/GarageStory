@@ -40,3 +40,4 @@ build/
 # .gitignore
 src/main/resources/config.properties
 savings/garage.dat
+out/artifacts/GarageStory_jar/GarageStory.jar

@@ -1,5 +1,6 @@
 package com.app.entity;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -8,6 +9,8 @@ import java.util.Objects;
 @SuppressWarnings("unused")
 public class Bike implements Serializable {
 
+    @Serial
+    private static final long serialVersionUID = 1L;
     private String brand;
     private String model;
     private String plate;
@@ -98,6 +101,14 @@ public class Bike implements Serializable {
 
     public void setPowerpartList(ArrayList<Powerpart> powerpartList) {
         this.powerpartList = powerpartList;
+    }
+
+    public void removePowerpart(Powerpart powerpart) {
+        powerpartList.remove(powerpart);
+    }
+
+    public Powerpart findPowerpartByName(String name) {
+        return powerpartList.stream().filter(p-> p.getName().equals(name)).findFirst().orElse(null);
     }
 
     @Override

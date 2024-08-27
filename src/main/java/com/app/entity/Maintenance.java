@@ -1,11 +1,14 @@
 package com.app.entity;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDate;
 
 @SuppressWarnings("unused")
 public class Maintenance implements Serializable {
 
+    @Serial
+    private static final long serialVersionUID = 3L;
     private int kilometers;
     private String operations;
     private Double price;

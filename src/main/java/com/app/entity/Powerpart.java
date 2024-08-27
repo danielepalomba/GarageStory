@@ -1,10 +1,13 @@
 package com.app.entity;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 @SuppressWarnings("unused")
 public class Powerpart implements Serializable {
 
+    @Serial
+    private static final long serialVersionUID = 4L;
     private String brand;
     private String name;
     private Double price;

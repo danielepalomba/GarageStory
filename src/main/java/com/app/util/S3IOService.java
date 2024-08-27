@@ -17,11 +17,16 @@ public class S3IOService {
 
     public static void uploadFile(S3Client s3) {
         try {
+            Path localFilePath = Paths.get(filePath);
+            Path parentDir = localFilePath.getParent();
+            if (parentDir != null && !Files.exists(parentDir)) {
+                Files.createDirectories(parentDir);
+            }
             s3.putObject(PutObjectRequest.builder()
                             .bucket(bucketName)
                             .key(keyName)
                             .build(),
-                    Paths.get(filePath)); //upload the file to the specified path
+                    localFilePath); //upload the file to the specified path
             System.out.println("File uploaded successfully!");
         } catch (Exception e) {
             e.printStackTrace();
@@ -31,6 +36,10 @@ public class S3IOService {
     public static void downloadFile(S3Client s3) {
         try {
             Path localFilePath = Paths.get(filePath);
+            Path parentDir = localFilePath.getParent();
+            if (parentDir != null && !Files.exists(parentDir)) {
+                Files.createDirectories(parentDir);
+            }
             if (Files.exists(localFilePath)) {
                 Files.delete(localFilePath);
             }
@@ -39,6 +48,7 @@ public class S3IOService {
                             .key(keyName)
                             .build(),
                     localFilePath);
+            System.out.println("File downloaded successfully!");
         } catch (IOException e) {
             e.printStackTrace();
         }

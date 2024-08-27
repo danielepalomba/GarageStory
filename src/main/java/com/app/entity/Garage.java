@@ -1,10 +1,14 @@
 package com.app.entity;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Optional;
 
 public class Garage implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 2L;
 
     private HashSet<Bike> bikes;
 

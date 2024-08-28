@@ -44,10 +44,12 @@ public class Powerpart implements Serializable {
 
     @Override
     public String toString() {
-        return "Powerpart{" +
-                "brand='" + brand + '\'' +
-                ", name='" + name + '\'' +
-                ", price=" + price +
-                '}';
+        StringBuilder sb = new StringBuilder();
+        sb.append("Powerpart Details:\n");
+        sb.append("             ").append("  Brand:   '").append(brand).append("'\n");
+        sb.append("             ").append("  Name:    '").append(name).append("'\n");
+        sb.append("             ").append("  Price:   ").append(price).append("\n");
+        return sb.toString();
     }
+
 }

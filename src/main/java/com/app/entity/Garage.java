@@ -40,6 +40,21 @@ public class Garage implements Serializable {
 
     @Override
     public String toString() {
-        return "Garage{" + "bikes=" + bikes + '}';
+        StringBuilder sb = new StringBuilder();
+        sb.append("Garage Details:\n");
+
+        if (bikes.isEmpty()) {
+            sb.append("  No bikes in the garage.\n");
+        } else {
+            sb.append("Bikes:\n");
+            int i = 1;
+            for (Bike bike : bikes) {
+                sb.append("     ").append("(").append(i).append(") ").append(bike.toString()).append("\n");
+                i++;
+            }
+        }
+
+        return sb.toString();
     }
+
 }

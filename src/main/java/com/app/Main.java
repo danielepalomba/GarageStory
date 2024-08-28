@@ -11,6 +11,7 @@ import software.amazon.awssdk.services.s3.S3Client;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.Properties;
 import java.util.Scanner;
@@ -19,7 +20,7 @@ import static java.lang.System.exit;
 
 public class Main {
 
-    private static S3Client loadClient(){
+    private static S3Client loadClient() {
         Properties properties = new Properties();
         try (InputStream input = Main.class.getClassLoader().getResourceAsStream("config.properties")) {
             if (input == null) {
@@ -55,23 +56,23 @@ public class Main {
 
     private static void addBike(Scanner scn, Garage garage) {
         System.out.println("Enter the brand: ");
-        String brand = scn.nextLine();
+        String brand = scn.nextLine().trim();
         System.out.println("Enter the model: ");
-        String model = scn.nextLine();
+        String model = scn.nextLine().trim();
         System.out.println("Enter the plate: ");
-        String plate = scn.nextLine();
+        String plate = scn.nextLine().trim();
         System.out.println("Enter the VIN: ");
-        String vin = scn.nextLine();
+        String vin = scn.nextLine().trim();
         System.out.println("Enter the insurance deadline: ");
-        String insuranceDate = scn.nextLine();
+        String insuranceDate = scn.nextLine().trim();
         System.out.println("Enter the review deadline: ");
-        String revDate = scn.nextLine();
+        String revDate = scn.nextLine().trim();
         garage.addBike(new Bike(brand, model, plate, vin, LocalDate.parse(insuranceDate), LocalDate.parse(revDate)));
     }
 
     private static void findBike(Scanner scn, Garage garage) {
         System.out.println("Enter the Name: ");
-        String NameToFind = scn.nextLine();
+        String NameToFind = scn.nextLine().trim();
         Bike bike = garage.getBikeByName(NameToFind);
         if (bike == null) {
             System.out.println("****Bike not found****");
@@ -106,21 +107,21 @@ public class Main {
         int kilometers = scn.nextInt();
         scn.nextLine();
         System.out.println("Enter the operations: ");
-        String operations = scn.nextLine();
+        String operations = scn.nextLine().trim();
         System.out.println("Enter the price: ");
         Double price = scn.nextDouble();
         scn.nextLine();
         System.out.println("Enter the date: ");
-        String date = scn.nextLine();
+        String date = scn.nextLine().trim();
         Maintenance maintenance = new Maintenance(kilometers, operations, price, LocalDate.parse(date));
         bike.addMaintenance(maintenance);
     }
 
     private static void addPowerpart(Scanner scn, Bike bike) {
         System.out.println("Enter the name: ");
-        String name = scn.nextLine();
+        String name = scn.nextLine().trim();
         System.out.println("Enter the brand: ");
-        String brand = scn.nextLine();
+        String brand = scn.nextLine().trim();
         System.out.println("Enter the price: ");
         Double price = scn.nextDouble();
         scn.nextLine();
@@ -130,25 +131,23 @@ public class Main {
 
     private static void removePowerpart(Scanner scn, Bike bike) {
         System.out.println("Enter the name: ");
-        String nameToRemove = scn.nextLine();
+        String nameToRemove = scn.nextLine().trim();
         Powerpart powerpart = bike.findPowerpartByName(nameToRemove);
         bike.removePowerpart(powerpart);
     }
 
     private static void removeBike(Scanner scn, Garage garage) {
         System.out.println("Enter the VIN: ");
-        String vinToRemove = scn.nextLine();
+        String vinToRemove = scn.nextLine().trim();
         garage.removeBikeByVIN(vinToRemove);
     }
 
     private static void showAllBikes(Garage garage) {
-        System.out.println("Bikes in the garage: ");
-        System.out.println(garage.getBikes());
+        System.out.println(garage.toString());
         System.out.println("--------------------");
     }
 
     public static void main(String[] args) {
-
         S3Client s3 = loadClient();
         S3IOService.downloadFile(s3);
 
@@ -156,32 +155,35 @@ public class Main {
         Scanner scn = new Scanner(System.in);
 
         char risp = 'y';
-        while (risp != 'n') {
-            Main.showMenu();
-            int choice = scn.nextInt();
-            scn.nextLine();
+        try {
+            while (risp != 'n') {
+                Main.showMenu();
+                int choice = scn.nextInt();
+                scn.nextLine();
 
-            switch (choice) {
-                case 1:
-                    Main.addBike(scn, garage);
-                    break;
-                case 2:
-                    Main.findBike(scn, garage);
-                    break;
-                case 3:
-                    Main.removeBike(scn, garage);
-                    break;
-                case 4:
-                    Main.showAllBikes(garage);
-                    break;
-                case 5:
-                    risp = 'n';
-                    break;
+                switch (choice) {
+                    case 1:
+                        Main.addBike(scn, garage);
+                        break;
+                    case 2:
+                        Main.findBike(scn, garage);
+                        break;
+                    case 3:
+                        Main.removeBike(scn, garage);
+                        break;
+                    case 4:
+                        Main.showAllBikes(garage);
+                        break;
+                    case 5:
+                        risp = 'n';
+                        break;
+                }
             }
+        } finally {
+            scn.close();
+            IOSave.save(garage);
+            S3IOService.uploadFile(s3);
+            IOSave.deleteDirectory();
         }
-        scn.close();
-        IOSave.save(garage);
-        S3IOService.uploadFile(s3);
-        IOSave.deleteDirectory();
     }
 }

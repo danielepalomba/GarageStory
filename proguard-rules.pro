@@ -1,6 +1,5 @@
--keep class com.app.** { *; }
 -dontwarn com.app.*
-# Offusca solo la classe Main, mantenendo il metodo main non offuscato
+# Mantieni la classe Main, ma offusca i suoi membri tranne il metodo main
 -keep class com.app.Main {
     public static void main(java.lang.String[]);
 }

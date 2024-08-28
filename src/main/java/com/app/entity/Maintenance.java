@@ -55,11 +55,12 @@ public class Maintenance implements Serializable {
 
     @Override
     public String toString() {
-        return "Maintenance{" +
-                "kilometers=" + kilometers +
-                ", operations='" + operations + '\'' +
-                ", price=" + price +
-                ", date=" + date +
-                '}';
+        StringBuilder sb = new StringBuilder();
+        sb.append("Maintenance Details:\n");
+        sb.append("             ").append("  Kilometers:   ").append(kilometers).append("\n");
+        sb.append("             ").append("  Operations:   '").append(operations).append("'\n");
+        sb.append("             ").append("  Price:        ").append(price).append("\n");
+        sb.append("             ").append("  Date:         ").append(date).append("\n");
+        return sb.toString();
     }
 }

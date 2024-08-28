@@ -113,17 +113,32 @@ public class Bike implements Serializable {
 
     @Override
     public String toString() {
-        return "Bike{" +
-                "brand='" + brand + '\'' +
-                ", model='" + model + '\'' +
-                ", plate='" + plate + '\'' +
-                ", VIN='" + VIN + '\'' +
-                ", insuranceDeadline=" + insuranceDeadline +
-                ", reviewDeadline=" + reviewDeadline +
-                ", maintenanceList=" + maintenanceList +
-                ", powerpartList=" + powerpartList +
-                '}';
+        StringBuilder sb = new StringBuilder();
+        sb.append("Bike Details:\n");
+        sb.append("         ").append("  Brand:     '").append(brand).append("'\n");
+        sb.append("         ").append("  Model:     '").append(model).append("'\n");
+        sb.append("         ").append("  Plate:     '").append(plate).append("'\n");
+        sb.append("         ").append("  VIN:       '").append(VIN).append("'\n");
+        sb.append("         ").append("  Insurance Due:     ").append(insuranceDeadline).append("\n");
+        sb.append("         ").append("  Review Due:        ").append(reviewDeadline).append("\n");
+
+        sb.append("\n           Maintenance:\n");
+        int i = 1;
+        for (Maintenance maintenance : maintenanceList) {
+            sb.append("             ").append("(").append(i).append(") ").append(maintenance.toString()).append("\n");
+            i++;
+        }
+
+        sb.append("\n           Powerparts:\n");
+        i = 1;
+        for (Powerpart powerpart : powerpartList) {
+            sb.append("             ").append("(").append(i).append(") ").append(powerpart.toString()).append("\n");
+            i++;
+        }
+
+        return sb.toString();
     }
+
 
     @Override
     public boolean equals(Object o) {

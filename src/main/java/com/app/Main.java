@@ -10,14 +10,13 @@ import software.amazon.awssdk.services.s3.S3Client;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.Properties;
 import java.util.Scanner;
 
 import static java.lang.System.exit;
 
+@SuppressWarnings("CallToPrintStackTrace")
 public class Main {
 
     private static S3Client loadClient() {
@@ -50,9 +49,19 @@ public class Main {
 
     private static void bikeMenu() {
         System.out.println("--------------------");
-        System.out.println("Add maintenance report [1]\nAdd powerpart [2]\nRemove powerpart [3]\nExit [4]");
+        System.out.println("Add maintenance report [1]\nAdd powerpart [2]\nRemove powerpart [3]\nTotal powerparts price [4]\nExit [5]");
         System.out.println("--------------------");
     }
+
+    private static void pressToContinue() {
+        System.out.println("Press Enter to continue...");
+        try {
+            while (System.in.read() != '\n');
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 
     private static void addBike(Scanner scn, Garage garage) {
         System.out.println("Enter the brand: ");
@@ -78,9 +87,9 @@ public class Main {
             System.out.println("****Bike not found****");
         } else {
             System.out.println(bike);
-            System.out.println("--------------------");
             char risp = 'y';
             while (risp != 'n') {
+                Main.pressToContinue();
                 Main.bikeMenu();
                 int choice = scn.nextInt();
                 scn.nextLine();
@@ -95,6 +104,8 @@ public class Main {
                         Main.removePowerpart(scn, bike);
                         break;
                     case 4:
+                        Main.getPowerpartsPrice(bike);
+                    case 5:
                         risp = 'n';
                         break;
                 }
@@ -136,6 +147,10 @@ public class Main {
         bike.removePowerpart(powerpart);
     }
 
+    private static void getPowerpartsPrice(Bike bike) {
+        System.out.println("The total price of the powerparts is: " + bike.getPowerpartPrice());
+    }
+
     private static void removeBike(Scanner scn, Garage garage) {
         System.out.println("Enter the VIN: ");
         String vinToRemove = scn.nextLine().trim();
@@ -152,10 +167,9 @@ public class Main {
         S3IOService.downloadFile(s3);
 
         Garage garage = IOSave.read();
-        Scanner scn = new Scanner(System.in);
 
-        char risp = 'y';
-        try {
+        try (Scanner scn = new Scanner(System.in)) {
+            char risp = 'y';
             while (risp != 'n') {
                 Main.showMenu();
                 int choice = scn.nextInt();
@@ -164,15 +178,19 @@ public class Main {
                 switch (choice) {
                     case 1:
                         Main.addBike(scn, garage);
+                        Main.pressToContinue();
                         break;
                     case 2:
                         Main.findBike(scn, garage);
+                        Main.pressToContinue();
                         break;
                     case 3:
                         Main.removeBike(scn, garage);
+                        Main.pressToContinue();
                         break;
                     case 4:
                         Main.showAllBikes(garage);
+                        Main.pressToContinue();
                         break;
                     case 5:
                         risp = 'n';
@@ -180,7 +198,6 @@ public class Main {
                 }
             }
         } finally {
-            scn.close();
             IOSave.save(garage);
             S3IOService.uploadFile(s3);
             IOSave.deleteDirectory();

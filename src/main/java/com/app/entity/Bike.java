@@ -111,6 +111,10 @@ public class Bike implements Serializable {
         return powerpartList.stream().filter(p-> p.getName().equals(name)).findFirst().orElse(null);
     }
 
+    public Double getPowerpartPrice() {
+        return powerpartList.stream().mapToDouble(Powerpart::getPrice).sum();
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();

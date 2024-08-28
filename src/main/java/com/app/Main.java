@@ -60,6 +60,7 @@ public class Main {
         System.out.println("--------------------");
     }
 
+    @SuppressWarnings("StatementWithEmptyBody")
     private static void pressToContinue() {
         System.out.println("Press Enter to continue...");
         try {
@@ -222,6 +223,30 @@ public class Main {
         }
     }
 
+    private static void notifyReview(Garage garage) {
+        List<Bike> bikes = garage.checkReview();
+        if (bikes.isEmpty()) {
+            System.out.println("No bikes need review renewal today.");
+        } else {
+            System.out.println("Bikes that need review renewal today:");
+            for (Bike bike : bikes) {
+                System.out.println(bike);
+            }
+        }
+    }
+
+    private static void notifyTax(Garage garage) {
+        List<Bike> bikes = garage.checkTax();
+        if (bikes.isEmpty()) {
+            System.out.println("No bikes need tax renewal today.");
+        } else {
+            System.out.println("Bikes that need tax renewal today:");
+            for (Bike bike : bikes) {
+                System.out.println(bike);
+            }
+        }
+    }
+
     public static void main(String[] args) {
         S3Client s3 = loadClient();
         S3IOService.downloadFile(s3);
@@ -229,6 +254,8 @@ public class Main {
         Garage garage = IOSave.read();
 
         Main.notifyInsurance(garage);
+        Main.notifyReview(garage);
+        Main.notifyTax(garage);
 
         try (Scanner scn = new Scanner(System.in)) {
             char risp = 'y';

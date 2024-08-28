@@ -43,6 +43,16 @@ public class Garage implements Serializable {
         return bikes.stream().filter(b-> b.getInsuranceDeadline().isEqual(now) || now.isAfter(b.getInsuranceDeadline())).collect(Collectors.toList());
     }
 
+    public List<Bike> checkReview(){
+        LocalDate now = LocalDate.now(ZoneId.of("Europe/Rome"));
+        return bikes.stream().filter(b-> b.getReviewDeadline().isEqual(now) || now.isAfter(b.getReviewDeadline())).collect(Collectors.toList());
+    }
+
+    public List<Bike> checkTax(){
+        LocalDate now = LocalDate.now(ZoneId.of("Europe/Rome"));
+        return bikes.stream().filter(b-> b.getTaxDeadline().isEqual(now) || now.isAfter(b.getTaxDeadline())).collect(Collectors.toList());
+    }
+
     public void setBikes(HashSet<Bike> bikes) {
         this.bikes = bikes;
     }

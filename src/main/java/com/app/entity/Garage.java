@@ -2,9 +2,14 @@ package com.app.entity;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+@SuppressWarnings("unused")
 public class Garage implements Serializable {
 
     @Serial
@@ -20,8 +25,8 @@ public class Garage implements Serializable {
         bikes.add(bike);
     }
 
-    public void removeBikeByVIN(String vin) {
-        bikes.removeIf(b-> b.getVIN().equals(vin));
+    public boolean removeBikeByVIN(String vin) {
+        return bikes.stream().filter(b-> b.getVIN().equals(vin)).findFirst().map(bikes::remove).orElse(false);
     }
 
     public Bike getBikeByName(String model) {
@@ -33,7 +38,11 @@ public class Garage implements Serializable {
         return bikes;
     }
 
-    @SuppressWarnings("unused")
+    public List<Bike> checkInsurance(){
+        LocalDate now = LocalDate.now(ZoneId.of("Europe/Rome"));
+        return bikes.stream().filter(b-> b.getInsuranceDeadline().isEqual(now) || now.isAfter(b.getInsuranceDeadline())).collect(Collectors.toList());
+    }
+
     public void setBikes(HashSet<Bike> bikes) {
         this.bikes = bikes;
     }

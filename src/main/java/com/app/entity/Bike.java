@@ -17,16 +17,18 @@ public class Bike implements Serializable {
     private String VIN;
     private LocalDate insuranceDeadline;
     private LocalDate reviewDeadline;
+    private LocalDate taxDeadline;
     private ArrayList<Maintenance> maintenanceList;
     private ArrayList<Powerpart> powerpartList;
 
-    public Bike(String brand, String model, String plate, String VIN, LocalDate insuranceDeadline, LocalDate reviewDeadline) {
+    public Bike(String brand, String model, String plate, String VIN, LocalDate insuranceDeadline, LocalDate reviewDeadline, LocalDate taxDeadline) {
         this.brand = brand;
         this.model = model;
         this.plate = plate;
         this.VIN = VIN;
         this.insuranceDeadline = insuranceDeadline;
         this.reviewDeadline = reviewDeadline;
+        this.taxDeadline = taxDeadline;
         this.maintenanceList = new ArrayList<>();
         this.powerpartList = new ArrayList<>();
     }
@@ -107,8 +109,16 @@ public class Bike implements Serializable {
         powerpartList.remove(powerpart);
     }
 
+    public LocalDate getTaxDeadline() {
+        return taxDeadline;
+    }
+
+    public void setTaxDeadline(LocalDate taxDeadline) {
+        this.taxDeadline = taxDeadline;
+    }
+
     public Powerpart findPowerpartByName(String name) {
-        return powerpartList.stream().filter(p-> p.getName().equals(name)).findFirst().orElse(null);
+        return powerpartList.stream().filter(p -> p.getName().equals(name)).findFirst().orElse(null);
     }
 
     public Double getPowerpartPrice() {
@@ -123,8 +133,9 @@ public class Bike implements Serializable {
         sb.append("         ").append("  Model:     '").append(model).append("'\n");
         sb.append("         ").append("  Plate:     '").append(plate).append("'\n");
         sb.append("         ").append("  VIN:       '").append(VIN).append("'\n");
-        sb.append("         ").append("  Insurance Due:     ").append(insuranceDeadline).append("\n");
-        sb.append("         ").append("  Review Due:        ").append(reviewDeadline).append("\n");
+        sb.append("         ").append("  Insurance expiry:     ").append(insuranceDeadline).append("\n");
+        sb.append("         ").append("  Review expiry:        ").append(reviewDeadline).append("\n");
+        sb.append("         ").append("  Tax expiry:           ").append(taxDeadline).append("\n");
 
         sb.append("\n           Maintenance:\n");
         int i = 1;
@@ -142,7 +153,6 @@ public class Bike implements Serializable {
 
         return sb.toString();
     }
-
 
     @Override
     public boolean equals(Object o) {

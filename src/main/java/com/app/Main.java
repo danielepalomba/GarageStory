@@ -11,6 +11,7 @@ import software.amazon.awssdk.services.s3.S3Client;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Properties;
 import java.util.Scanner;
 
@@ -49,19 +50,24 @@ public class Main {
 
     private static void bikeMenu() {
         System.out.println("--------------------");
-        System.out.println("Add maintenance report [1]\nAdd powerpart [2]\nRemove powerpart [3]\nTotal powerparts price [4]\nExit [5]");
+        System.out.println("Add maintenance report [1]\nAdd powerpart [2]\nRemove powerpart [3]\nTotal powerparts price [4]\nShow administrative [5]\nExit [6]");
+        System.out.println("--------------------");
+    }
+
+    private static void showAdministrativeBikeMenu() {
+        System.out.println("--------------------");
+        System.out.println("Set insurance date [1]\nSet review date [2]\nSet tax date [3]\nExit [4]");
         System.out.println("--------------------");
     }
 
     private static void pressToContinue() {
         System.out.println("Press Enter to continue...");
         try {
-            while (System.in.read() != '\n');
+            while (System.in.read() != '\n') ;
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
 
     private static void addBike(Scanner scn, Garage garage) {
         System.out.println("Enter the brand: ");
@@ -76,7 +82,9 @@ public class Main {
         String insuranceDate = scn.nextLine().trim();
         System.out.println("Enter the review deadline: ");
         String revDate = scn.nextLine().trim();
-        garage.addBike(new Bike(brand, model, plate, vin, LocalDate.parse(insuranceDate), LocalDate.parse(revDate)));
+        System.out.println("Enter the tax deadline: ");
+        String taxDate = scn.nextLine().trim();
+        garage.addBike(new Bike(brand, model, plate, vin, LocalDate.parse(insuranceDate), LocalDate.parse(revDate), LocalDate.parse(taxDate)));
     }
 
     private static void findBike(Scanner scn, Garage garage) {
@@ -106,12 +114,58 @@ public class Main {
                         break;
                     case 4:
                         Main.getPowerpartsPrice(bike);
+                        break;
                     case 5:
+                        administrativeBikeMenu(scn, bike);
+                    case 6:
                         risp = 'n';
                         break;
                 }
             }
         }
+    }
+
+    private static void administrativeBikeMenu(Scanner scn, Bike bike) {
+        char risp = 'y';
+        while (risp != 'n') {
+            Main.showAdministrativeBikeMenu();
+            int choice = scn.nextInt();
+            scn.nextLine();
+            switch (choice) {
+                case 1:
+                    System.out.println("Enter the insurance deadline: ");
+                    String insuranceDate = scn.nextLine().trim();
+                    bike.setInsuranceDeadline(LocalDate.parse(insuranceDate));
+                    break;
+                case 2:
+                    System.out.println("Enter the review deadline: ");
+                    String revDate = scn.nextLine().trim();
+                    bike.setReviewDeadline(LocalDate.parse(revDate));
+                    break;
+                case 3:
+                    System.out.println("Enter the tax deadline: ");
+                    String taxDate = scn.nextLine().trim();
+                    bike.setTaxDeadline(LocalDate.parse(taxDate));
+                    break;
+                case 4:
+                    risp = 'n';
+                    break;
+            }
+        }
+    }
+
+    private static void removeBike(Scanner scn, Garage garage) {
+        System.out.println("Enter the VIN: ");
+        String vinToRemove = scn.nextLine().trim();
+        boolean check = garage.removeBikeByVIN(vinToRemove);
+        if (!check) {
+            System.out.println("****Bike not found****");
+        }
+    }
+
+    private static void showAllBikes(Garage garage) {
+        System.out.println(garage.toString());
+        System.out.println("--------------------");
     }
 
     private static void addMaintenance(Scanner scn, Bike bike) {
@@ -145,6 +199,10 @@ public class Main {
         System.out.println("Enter the name: ");
         String nameToRemove = scn.nextLine().trim();
         Powerpart powerpart = bike.findPowerpartByName(nameToRemove);
+        if (powerpart == null) {
+            System.out.println("****Powerpart not found****");
+            return;
+        }
         bike.removePowerpart(powerpart);
     }
 
@@ -152,15 +210,16 @@ public class Main {
         System.out.println("The total price of the powerparts is: " + bike.getPowerpartPrice());
     }
 
-    private static void removeBike(Scanner scn, Garage garage) {
-        System.out.println("Enter the VIN: ");
-        String vinToRemove = scn.nextLine().trim();
-        garage.removeBikeByVIN(vinToRemove);
-    }
-
-    private static void showAllBikes(Garage garage) {
-        System.out.println(garage.toString());
-        System.out.println("--------------------");
+    private static void notifyInsurance(Garage garage) {
+        List<Bike> bikes = garage.checkInsurance();
+        if (bikes.isEmpty()) {
+            System.out.println("No bikes need insurance renewal today.");
+        } else {
+            System.out.println("Bikes that need insurance renewal today:");
+            for (Bike bike : bikes) {
+                System.out.println(bike);
+            }
+        }
     }
 
     public static void main(String[] args) {
@@ -168,6 +227,8 @@ public class Main {
         S3IOService.downloadFile(s3);
 
         Garage garage = IOSave.read();
+
+        Main.notifyInsurance(garage);
 
         try (Scanner scn = new Scanner(System.in)) {
             char risp = 'y';

@@ -83,6 +83,7 @@ public class Main {
         System.out.println("Enter the Name: ");
         String NameToFind = scn.nextLine().trim();
         Bike bike = garage.getBikeByName(NameToFind);
+
         if (bike == null) {
             System.out.println("****Bike not found****");
         } else {

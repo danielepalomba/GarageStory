@@ -6,17 +6,12 @@ import java.io.*;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 public class IOSave {
 
     public static void save(Garage garage) {
         try {
-            Path localFilePath = Paths.get("savings/garage.dat");
-            Path parentDir = localFilePath.getParent();
-            if (parentDir != null && !Files.exists(parentDir)) {
-                Files.createDirectories(parentDir);
-            }
+            Path localFilePath = S3IOService.getTempDir().resolve("garage.dat");
             try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(localFilePath.toString()))) {
                 oos.writeObject(garage);
             }
@@ -27,7 +22,8 @@ public class IOSave {
 
     public static Garage read() {
         Garage garage = null;
-        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("savings/garage.dat"))) {
+        Path localFilePath = S3IOService.getTempDir().resolve("garage.dat");
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(localFilePath.toString()))) {
             garage = (Garage) ois.readObject();
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
@@ -39,9 +35,9 @@ public class IOSave {
     }
 
     public static void deleteDirectory() {
-        Path path = Paths.get("savings");
-        if (Files.exists(path)) {
-            try (DirectoryStream<Path> stream = Files.newDirectoryStream(path)) {
+        Path tempDir = S3IOService.getTempDir();
+        if (Files.exists(tempDir)) {
+            try (DirectoryStream<Path> stream = Files.newDirectoryStream(tempDir)) {
                 for (Path entry : stream) {
                     if (Files.isDirectory(entry)) {
                         deleteDirectory(entry);
@@ -53,7 +49,7 @@ public class IOSave {
                 e.printStackTrace();
             }
             try {
-                Files.delete(path);
+                Files.delete(tempDir);
             } catch (IOException e) {
                 e.printStackTrace();
             }

@@ -125,6 +125,14 @@ public class Bike implements Serializable {
         return powerpartList.stream().mapToDouble(Powerpart::getPrice).sum();
     }
 
+    public Maintenance findMaintenanceByDate(LocalDate date) {
+        return maintenanceList.stream().filter(m -> m.getDate().equals(date)).findFirst().orElse(null);
+    }
+
+    public void removeMaintenance(Maintenance maintenance) {
+        maintenanceList.remove(maintenance);
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();

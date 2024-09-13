@@ -50,7 +50,7 @@ public class Main {
 
     private static void bikeMenu() {
         System.out.println("--------------------");
-        System.out.println("Add maintenance report [1]\nAdd powerpart [2]\nRemove powerpart [3]\nTotal powerparts price [4]\nShow administrative [5]\nExit [6]");
+        System.out.println("Add maintenance report [1]\nRemove maintenance report [2]\nAdd powerpart [3]\nRemove powerpart [4]\nTotal powerparts price [5]\nShow administrative [6]\nExit [7]");
         System.out.println("--------------------");
     }
 
@@ -108,17 +108,20 @@ public class Main {
                         Main.addMaintenance(scn, bike);
                         break;
                     case 2:
-                        Main.addPowerpart(scn, bike);
+                        Main.removeMaintenance(scn, bike);
                         break;
                     case 3:
-                        Main.removePowerpart(scn, bike);
+                        Main.addPowerpart(scn, bike);
                         break;
                     case 4:
-                        Main.getPowerpartsPrice(bike);
+                        Main.removePowerpart(scn, bike);
                         break;
                     case 5:
-                        administrativeBikeMenu(scn, bike);
+                        Main.getPowerpartsPrice(bike);
+                        break;
                     case 6:
+                        administrativeBikeMenu(scn, bike);
+                    case 7:
                         risp = 'n';
                         break;
                 }
@@ -182,6 +185,17 @@ public class Main {
         String date = scn.nextLine().trim();
         Maintenance maintenance = new Maintenance(kilometers, operations, price, LocalDate.parse(date));
         bike.addMaintenance(maintenance);
+    }
+
+    private static void removeMaintenance(Scanner scn, Bike bike) {
+        System.out.println("Enter the date: ");
+        String dateToRemove = scn.nextLine().trim();
+        Maintenance maintenance = bike.findMaintenanceByDate(LocalDate.parse(dateToRemove));
+        if (maintenance == null) {
+            System.out.println("****Maintenance not found****");
+            return;
+        }
+        bike.removeMaintenance(maintenance);
     }
 
     private static void addPowerpart(Scanner scn, Bike bike) {
